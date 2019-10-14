@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Products>
+    <Manufacturer id="notebook">
+        <Производитель>Lenovo</Производитель>
+        <Диагональ>15</Диагональ>
+        <Вес>1.7</Вес>
+    </Manufacturer>
+</Products>
