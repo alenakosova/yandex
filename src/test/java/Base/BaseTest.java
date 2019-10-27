@@ -10,8 +10,7 @@ import static Pages.BasePage.*;
 /**
  * Created by out-kosova-aa on 05.10.2019.
  */
-public class BaseTest  {
-
+public class BaseTest {
     @Rule
     public TestWatcher watcher = new TestWatcher() {
         @Override
@@ -27,18 +26,10 @@ public class BaseTest  {
     };
 
 
-
     @After
-    public void closeBrowser(){
-        makeScreenshot();
-        if (getWebDriver() != null){
-            getWebDriver().quit();
+    public void closeBrowser() {
+        if (getWebDriver() != null) {
             setWebDriverNull();
         }
     }
-
-
-
-
-
 }
