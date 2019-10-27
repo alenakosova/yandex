@@ -1,4 +1,3 @@
-import Base.BaseTest;
 import Base.Model;
 import Base.Props;
 import Pages.ModelInfoPage;
@@ -7,9 +6,7 @@ import Pages.YandexPage;
 import Parser.Global;
 import Parser.Notebooks;
 import io.qameta.allure.Step;
-import org.junit.Assert;
 import org.w3c.dom.*;
-//import ru.yandex.qatools.allure.annotations.Step;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -19,9 +16,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+//import ru.yandex.qatools.allure.annotations.Step;
 
 /**
  * Created by out-kosova-aa on 05.10.2019.
@@ -162,15 +159,13 @@ public class YandexSteps extends Notebooks {
     @Step("Поиск параметров для производителя {0}")
     private Model searchEach(String name, String minPrice, String maxPrice, String rating) {
         NotebooksPage page = new NotebooksPage();
-        page.getCheckBoxPath(name).click();
+        page.getManufacturerCheckBoxPath(name).click();
         page.setPrice(minPrice, maxPrice);
         page.setParams(rating);
+        page.setManufacturers(new Global().getVendor());
         page.getThirdFromTop(name);
         return new ModelInfoPage().saveParams(name);
     }
-
-
-
 
 
     private List<String> findByProductType(String findValue, String condition) {

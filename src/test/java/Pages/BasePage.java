@@ -3,19 +3,22 @@ package Pages;
 import Base.Props;
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-import org.junit.After;
-import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.rules.ErrorCollector;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.PageFactory;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementDecorator;
 import ru.yandex.qatools.htmlelements.loader.decorator.HtmlElementLocatorFactory;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class BasePage {
@@ -30,14 +33,18 @@ public class BasePage {
         return iedriver;
     }
 
+    @Rule
+    public ErrorCollector collector = new ErrorCollector();
 
-    public static WebDriver getWebDriver() {
+
+    public static RemoteWebDriver getWebDriver() {
         if (chromeDriver != null) {
             return chromeDriver;
         } else {
             return iedriver;
         }
     }
+
 
     BasePage() {
         if (Boolean.valueOf(Props.get("iedriverIsOn"))) {
@@ -51,15 +58,13 @@ public class BasePage {
 
     }
 
-    public void pageIsLoad() {
+    void pageIsLoad() {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
-
 
 
     public static void setWebDriverNull() {
@@ -83,6 +88,7 @@ public class BasePage {
             ChromeOptions options = new ChromeOptions();
             if (Boolean.valueOf(Props.get("headless"))) {
                 options.addArguments("--headless", "--intl.accept_languages=ru", "--lang=ru");
+                chromeDriver.manage().window().setSize(new Dimension(1920, 1080));
 
             } else {
                 options.addArguments("--intl.accept_languages=ru", "--lang=ru");
@@ -90,8 +96,7 @@ public class BasePage {
             chromeDriver = new ChromeDriver(options);
             chromeDriver.manage().timeouts().pageLoadTimeout(Integer.valueOf(Props.get("webdriver.timeout")), TimeUnit.MILLISECONDS);
             chromeDriver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
-            chromeDriver.manage().window().setSize(new Dimension(1920,1080));
-            chromeDriver.manage().window().fullscreen();
+            chromeDriver.manage().window().maximize();
         }
     }
 
@@ -101,21 +106,22 @@ public class BasePage {
 
     }
 
+    public List<WebElement> getWebElements(By by) {
+        List<WebElement> elements = getWebDriver().findElements(by);
+        if (elements.isEmpty()) {
+            return null;
+        }
+        return elements;
+    }
 
     @Step("Прикрепленный скриншот")
     @Attachment(type = "image/png", value = "Screenshot")
     public static byte[] makeScreenshot() {
-        if (iedriver != null) {
-            return iedriver.getScreenshotAs(OutputType.BYTES);
+        byte[] screenshot = new byte[0];
+        if (getWebDriver() != null) {
+            screenshot = getWebDriver().getScreenshotAs(OutputType.BYTES);
         }
-        if (chromeDriver != null) {
-            return chromeDriver.getScreenshotAs(OutputType.BYTES);
-        }
-        else{
-            Assert.fail("Не инициализаирован web-драйвер");
-        return new byte[0];
-        }
-
+        return screenshot;
     }
 
 
